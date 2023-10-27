@@ -1,0 +1,12 @@
+﻿@inject BlazorWebAssemblyGame.Client.Services.IBananaService BananaService
+
+<button class="btn btn-info" @onclick="()=>AddBanana(10)">+</button>
+
+
+@code {
+
+	private void AddBanana(int amount)
+	{
+		BananaService.AddBananas(amount);
+	}
+}

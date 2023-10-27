@@ -1,0 +1,47 @@
+﻿@page "/build"
+@inject BlazorWebAssemblyGame.Client.Services.IBananaService BananaService
+@inject BlazorWebAssemblyGame.Client.Services.IUnitService UnitService
+@inject IToastService ToastService
+
+<div class="form-group">
+	<select @bind="selectedUnitId" class="form-control">
+		@foreach (var unit in UnitService.Units)
+		{
+			<option value="@unit.Id">@unit.Title - @unit.BananaCost Bananas</option>
+		}
+	</select>
+</div>
+
+<button class="btn btn-primary" @onclick="BuildUnit">Build Unit</button>
+
+@if (needMoreBananas)
+{
+	<div class="validation-message">
+		Not enough bananas :(
+	</div>
+}
+
+@code {
+
+	bool needMoreBananas = false;
+
+	int selectedUnitId = 1;
+
+	public void BuildUnit()
+	{
+		Unit selectedUnit = UnitService.Units.FirstOrDefault(x => x.Id == selectedUnitId);
+
+		if (BananaService.Bananas < selectedUnit.BananaCost)
+		{
+			needMoreBananas = true;
+			ToastService.ShowError("Not enough bananas!",":(");
+			return;
+		}
+
+		needMoreBananas = false;
+
+		BananaService.EatBananas(selectedUnit.BananaCost);
+
+		UnitService.AddUnit(selectedUnitId);
+	}
+}
